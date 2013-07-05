@@ -1,0 +1,37 @@
+Haversine calculates the distance between two points represented via latitude and longitude using the haversine formula. It augments each event with the calculated distance, storing the result in a field named 'distance' or another field optionally specified by the user.
+
+While the distance between two points is a relatively basic piece of data, this tool provides a piece of information absent from many tools that provide location awareness (a common example might be an IP geo-location utility).
+
+Knowledge of distance between two points can enhance understanding of user behavior and demographics, origin of security events, illustrate patterns of movement and velocity, and identify anomalies related to specific locations.
+
+\---
+
+General usage information:
+
+Latitude and longitude for input must be represented in decimal degree format (e.g. "-44.11,78.23"), though separate input fields may be specified for each. The default unit of distance is the kilometer, but output in miles may be optionally requested by the user. The point of origin relative to which distance is calculated can be specified as a static value or dynamically from data provided in each event.
+
+\---
+
+Syntax:
+
+haversine outputField=fieldname units=mi|km (origin=<latitude , longitude> | originField=fieldname) (inputFieldName | inputFieldLat=fieldname inputFieldLon=fieldname)
+
+\---
+
+Example Use
+
+Calculate the distance of a lat/lon pair stored in field 'latlon' relative to a static point of origin, storing result in a custom field named 'dist'  
+... | haversine origin="-39.44,88.12" outputField=dist latlon
+
+Specify input field names for latitude, longitude, and origin; the relevant field values are extracted from each event. Stores the calculated distance (using miles as a unit of measure) in an output field named 'dist'.
+
+... | haversine originField=my_location units=mi inputFieldLat=lat inputFieldLon=lon outputField=dist
+
+Calculate the distance of a lat/lon pair stored in field 'latlon' relative to an origin, storing result in the default output field 'distance'  
+... | haversine origin="-39.44,88.12" latlon
+
+\---
+
+Applied example  
+sourcetype="apache" GET somepage.php | table src_ip | geoip src_ip | strcat src_ip_latitude src_ip_longitude latlon | haversine origin="-47.31,80.33" latlon | stats avg(distance) as "Avg. Distance" by UserID
+
