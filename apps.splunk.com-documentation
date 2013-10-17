@@ -33,5 +33,5 @@ Calculate the distance of a lat/lon pair stored in field 'latlon' relative to an
 \---
 
 Applied example  
-sourcetype="apache" GET somepage.php | table src_ip | geoip src_ip | strcat src_ip_latitude src_ip_longitude latlon | haversine origin="-47.31,80.33" latlon | stats avg(distance) as "Avg. Distance" by UserID
+sourcetype="apache" GET somepage.php | table src_ip | geoip src_ip | strcat src_ip_latitude "," src_ip_longitude latlon | haversine origin="-47.31,80.33" latlon | stats avg(distance) as "Avg. Distance" by UserID
 
