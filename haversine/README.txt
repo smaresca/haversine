@@ -3,9 +3,15 @@ Calculates the distance between two points represented via latitude and longitud
 This is helpful when operating upon geo-spacial data obtained from IP-to-location tools/databases.  
 
 For example, if one wishes to determine the average distance of a user from a location associated with a specific website, one would build a search like the following:  
-    sourcetype="apache" GET somepage.php | table src_ip | geoip src_ip | haversine origin="-47.31,80.33" inputFieldLat=src_ip_latitude inputFieldLon=src_ip_longitude
+    sourcetype="apache" GET somepage.php | iplocation src_ip | haversine origin="-47.31,80.33" lat lon
 
 The output includes the original event data, with an added field 'distance' -- after which one might perform further analysis. For example:
-    sourcetype="apache" GET somepage.php | table src_ip | geoip src_ip | strcat src_ip_latitude "," src_ip_longitude latlon | haversine origin="-47.31,80.33" latlon | stats avg(distance) as "Avg. Distance" by userid
+    sourcetype="apache" GET somepage.php | iplocation src_ip | haversine origin="-47.31,80.33" lat lon | stats avg(distance) as "Avg. Distance" by userid
+
+Other examples (flexible syntax - positional or k=v params, separate or combined fields for lat and lon) :
+    sourcetype="apache" GET somepage.php | iplocation src_ip | haversine origin="-47.31,80.33" units=mi lat lon 
+    sourcetype="apache" GET somepage.php | iplocation src_ip | haversine origin="-47.31,80.33" outputField=d lat lon 
+    sourcetype="apache" GET somepage.php | geoip src_ip | haversine origin="-47.31,80.33" inputFieldLat=src_ip_latitude inputFieldLon=src_ip_longitude
+    sourcetype="raw_coords" some filter | eval latlon_in_decimal_degree_format="fieldA,fieldB" | haversine origin="-47.31,80.33" units=mi latlon_in_decimal_degree_format
 
 Copyright 2012 - Steven Maresca - steve.maresca@gmail.com
